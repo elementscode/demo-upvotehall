@@ -1,0 +1,77 @@
+import "./style.css";
+import { redirect } from "@elements/app";
+import { Layout } from "#app/shared/templates/layout";
+import { signup, MIN_PASSWORD } from "#app/shared/services/auth";
+
+interface SignupForm {
+  handle: string;
+  email: string;
+  password: string;
+  error: string;
+}
+
+function onSubmit(form: SignupForm) {
+  try {
+    signup(form.handle, form.email, form.password);
+    form.error = "";
+    redirect("/");
+  } catch (err: any) {
+    form.error = err.message;
+  }
+}
+
+<html lang="en" class="page-signup" (
+  private form: SignupForm = { handle: "", email: "", password: "", error: "" },
+)>
+  <Layout title="sign up">
+    <div class="page-shell is-form signup-form">
+      <form class="stack" onsubmit={() => onSubmit(form)}>
+        <h1>Create an account</h1>
+
+        <p e:if={form.error} class="error" role="alert">{form.error}</p>
+
+        <div class="field">
+          <label for="handle">username</label>
+          <input id="handle"
+                 name="username"
+                 value={form.handle}
+                 autocomplete="username"
+                 autocapitalize="none"
+                 spellcheck={false}
+                 pattern="[A-Za-z0-9_]{2,20}"
+                 required>
+          <small>letters, digits and underscores; shown on everything you post</small>
+        </div>
+
+        <div class="field">
+          <label for="email">email</label>
+          <input id="email"
+                 name="email"
+                 type="email"
+                 value={form.email}
+                 autocomplete="email"
+                 autocapitalize="none"
+                 spellcheck={false}
+                 required>
+          <small>we email you when someone replies to you</small>
+        </div>
+
+        <div class="field">
+          <label for="password">password</label>
+          <input id="password"
+                 name="password"
+                 type="password"
+                 value={form.password}
+                 autocomplete="new-password"
+                 minlength={MIN_PASSWORD}
+                 required>
+          <small>at least {MIN_PASSWORD} characters</small>
+        </div>
+
+        <button type="submit" class="is-primary">create account</button>
+
+        <a href="/signin">have an account? sign in</a>
+      </form>
+    </div>
+  </Layout>
+</html>

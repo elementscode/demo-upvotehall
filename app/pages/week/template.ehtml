@@ -1,0 +1,21 @@
+import "./style.css";
+import { LiveView } from "@elements/app";
+import { Layout } from "#app/shared/templates/layout";
+import { PostList } from "#app/shared/templates/post-list";
+import { Post, PostVote } from "#app/shared/services/posts";
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+export function thisWeek(posts: Iterable<Post>): Post[] {
+  let since = Date.now() - WEEK_MS;
+
+  return [...posts].filter((p) => new Date(p.createdAt).getTime() > since);
+}
+
+<html lang="en" class="page-week" (posts: LiveView<Post>, votes: LiveView<PostVote> | null)>
+  <Layout title="top this week" active="week">
+    <div class="page-shell is-marketing">
+      <PostList rows={thisWeek(posts)} {votes} feed={posts} empty="no posts this week" />
+    </div>
+  </Layout>
+</html>

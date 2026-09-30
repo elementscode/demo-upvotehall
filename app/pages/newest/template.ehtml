@@ -1,0 +1,13 @@
+import "./style.css";
+import { LiveView } from "@elements/app";
+import { Layout } from "#app/shared/templates/layout";
+import { PostList } from "#app/shared/templates/post-list";
+import { Post, PostVote } from "#app/shared/services/posts";
+
+<html lang="en" class="page-newest" (posts: LiveView<Post>, votes: LiveView<PostVote> | null)>
+  <Layout title="new" active="newest">
+    <div class="page-shell is-marketing">
+      <PostList rows={posts.slice()} {votes} feed={posts} />
+    </div>
+  </Layout>
+</html>

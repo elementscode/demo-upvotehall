@@ -1,0 +1,35 @@
+import "./style.css";
+
+function clip(text: string, max: number): string {
+  return text.length > max ? text.slice(0, max - 1) + "…" : text;
+}
+
+/**
+ * Sent to the author a new comment replies to.
+ *
+ * @email
+ */
+<html (
+  toHandle: string,
+  fromHandle: string,
+  postTitle: string,
+  parentBody: string | null,
+  body: string,
+  link: string,
+)>
+  <body class="email reply">
+    <div class="email-wrap">
+      <h2>{fromHandle} replied to you</h2>
+      <p>Hi {toHandle}, there is a new reply on <strong>{postTitle}</strong>.</p>
+
+      <p e:if={parentBody} class="quote">{clip(parentBody ?? "", 280)}</p>
+      <p class="reply-body">{body}</p>
+
+      <p><a href={link}>View the thread and reply</a></p>
+
+      <div class="email-footer">
+        <p>You get this because you posted on upvotehall.</p>
+      </div>
+    </div>
+  </body>
+</html>

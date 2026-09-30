@@ -1,0 +1,72 @@
+import "./style.css";
+import { LiveView } from "@elements/app";
+import { Layout } from "#app/shared/templates/layout";
+import { PostList } from "#app/shared/templates/post-list";
+import { Post, PostVote, ago } from "#app/shared/services/posts";
+
+export interface Profile {
+  id: string;
+  handle: string;
+  about: string;
+  createdAt: Date;
+  karma: number;
+}
+
+export interface UserComment {
+  id: string;
+  postId: string;
+  postTitle: string;
+  body: string;
+  score: number;
+  createdAt: Date;
+}
+
+<html lang="en" class="page-user" (
+  profile: Profile,
+  posts: LiveView<Post>,
+  votes: LiveView<PostVote> | null,
+  comments: UserComment[],
+  tab: string,
+)>
+  <Layout title={profile.handle}>
+    <div class="page-shell is-marketing">
+      <header class="user-head stack">
+        <h1>{profile.handle}</h1>
+        <p e:if={profile.about} class="user-about">{profile.about}</p>
+        <div class="user-stats cluster">
+          <span><strong>{profile.karma}</strong> karma</span>
+          <span><strong>{posts.length}{posts.hasMore ? "+" : ""}</strong> submissions</span>
+          <span><strong>{comments.length}</strong> comments</span>
+          <span>joined {ago(profile.createdAt)}</span>
+        </div>
+      </header>
+
+      <div class="tabs">
+        <nav class="tab-list" aria-label="Activity">
+          <a class={["tab", tab === "posts" && "is-active"]} href={`/user/${profile.handle}`}>submissions</a>
+          <a class={["tab", tab === "comments" && "is-active"]} href={`/user/${profile.handle}?tab=comments`}>comments</a>
+        </nav>
+      </div>
+
+      <div e:if={tab === "posts"}>
+        <PostList rows={posts.slice()} {votes} feed={posts} empty={`${profile.handle} has not submitted anything yet`} />
+      </div>
+
+      <div e:else>
+        <ul class="user-comments">
+          <li e:for={c of comments} class="user-comment">
+            <p class="user-comment-meta cluster">
+              <span>{c.score} {c.score === 1 ? "point" : "points"}</span>
+              <span aria-hidden="true">·</span>
+              <a href={`/item/${c.postId}#c-${c.id}`}>{ago(c.createdAt)}</a>
+              <span aria-hidden="true">·</span>
+              <span>on <a href={`/item/${c.postId}`}>{c.postTitle}</a></span>
+            </p>
+            <p class="user-comment-body">{c.body}</p>
+          </li>
+        </ul>
+        <p e:if={comments.length === 0} class="user-empty">{profile.handle} has not commented yet.</p>
+      </div>
+    </div>
+  </Layout>
+</html>
