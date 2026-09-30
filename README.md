@@ -1,12 +1,12 @@
-![Upvotehall, a link aggregator built with Elements: the front page with ranked link and text posts, vote counts, domains and comment counts.](POSTER_URL)
+![Upvotehall, a link aggregator built with Elements: the front page with ranked link and text posts, vote counts, domains and comment counts.](https://elements.dev/demos/01a0f3e4-7332-73bb-a1e9-c142c229657c/poster?v=c3b3c9f2be4c)
 
 # Upvotehall
 
 > A demo app built with [Elements](https://elements.dev).
 
-Links and text posts on a front page ranked by votes and age, with newest and top pages, threaded comments, karma and reply emails, all live.
+Links and text posts ranked by votes and age, newest and top pages, threaded comments, karma and reply emails, all live.
 
-**Demo:** [Upvotehall](DEMO_URL)
+**Demo:** [Upvotehall](https://elements.dev/demos/01a0f3e4-7332-73bb-a1e9-c142c229657c)
 
 ## Agent specs
 
