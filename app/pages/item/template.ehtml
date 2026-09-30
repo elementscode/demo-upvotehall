@@ -1,0 +1,132 @@
+import "./style.css";
+import { LiveView, session } from "@elements/app";
+import { Layout } from "#app/shared/templates/layout";
+import { VoteButton, PostTitle, PostMeta } from "#app/shared/templates/post-list";
+import { Post, PostVote, ago } from "#app/shared/services/posts";
+import {
+  Comment,
+  CommentVote,
+  MAX_COMMENT,
+  childrenOf,
+  descendantCount,
+  hasVotedComment,
+  postComment,
+  toggleCommentVote,
+} from "#app/shared/services/comments";
+
+interface Draft {
+  body: string;
+  open: boolean;
+  error: string;
+}
+
+export function onReply(view: LiveView<Comment>, parentId: string | null, draft: Draft) {
+  let body = draft.body.trim();
+
+  if (!body) {
+    draft.error = "write something first";
+    return;
+  }
+
+  try {
+    postComment(view, parentId, body, () => {
+      draft.body = "";
+      draft.open = false;
+      draft.error = "";
+    });
+  } catch (err: any) {
+    draft.error = err.message;
+  }
+}
+
+function plural(n: number, word: string): string {
+  return `${n} ${word}${n === 1 ? "" : "s"}`;
+}
+
+<CommentNode (
+  c: Comment,
+  all: LiveView<Comment>,
+  votes: LiveView<CommentVote> | null,
+  private collapsed: boolean = false,
+  private draft: Draft = { body: "", open: false, error: "" },
+)>
+  <li class="comment" id={`c-${c.id}`}>
+    <div class="comment-head row">
+      <button class={["vote-button", hasVotedComment(votes, c.id) && "is-active"]}
+              aria-label={hasVotedComment(votes, c.id) ? "remove upvote" : "upvote"}
+              aria-pressed={hasVotedComment(votes, c.id)}
+              disabled={c.userId === session.get("userId")}
+              onclick={() => toggleCommentVote(votes, c.id)}>
+        <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
+          <path d="M6 2 L11 9 H1 Z" fill="currentColor"/>
+        </svg>
+      </button>
+      <a class="comment-author" href={`/user/${c.userName}`}>{c.userName}</a>
+      <span>{plural(c.score, "point")}</span>
+      <span aria-hidden="true">·</span>
+      <a href={`#c-${c.id}`}>{ago(c.createdAt)}</a>
+      <button class="comment-toggle"
+              aria-expanded={!collapsed}
+              onclick={() => collapsed = !collapsed}>
+        {collapsed ? `[+${descendantCount(all, c.id) + 1}]` : "[–]"}
+      </button>
+    </div>
+
+    <div e:if={!collapsed} class="comment-content">
+      <p class="comment-body">{c.body}</p>
+
+      <div class="comment-actions row">
+        <button e:if={session.isLoggedIn()} onclick={() => draft.open = !draft.open}>{draft.open ? "cancel" : "reply"}</button>
+        <a e:else href="/signin">sign in to reply</a>
+      </div>
+
+      <form e:if={draft.open} class="comment-reply stack is-sm" onsubmit={() => onReply(all, c.id, draft)}>
+        <textarea value={draft.body} maxlength={MAX_COMMENT} placeholder={`reply to ${c.userName}`} aria-label="reply" focus={true}></textarea>
+        <p e:if={draft.error} class="error" role="alert">{draft.error}</p>
+        <div class="row">
+          <button type="submit" class="is-primary is-sm">reply</button>
+        </div>
+      </form>
+
+      <ul e:if={childrenOf(all, c.id).length > 0} class="comment-tree">
+        <CommentNode e:for={child of childrenOf(all, c.id)} c={child} {all} {votes} />
+      </ul>
+    </div>
+  </li>
+</CommentNode>
+
+<html lang="en" class="page-item" (
+  post: LiveView<Post>,
+  comments: LiveView<Comment>,
+  postVotes: LiveView<PostVote> | null,
+  commentVotes: LiveView<CommentVote> | null,
+  private draft: Draft = { body: "", open: true, error: "" },
+)>
+  <Layout title={post.at(0)?.title ?? "post"}>
+    <div class="page-shell is-marketing">
+      <article e:for={p of post} class="item-post post-row is-bare">
+        <VoteButton post={p} votes={postVotes} />
+        <div class="post-body">
+          <PostTitle post={p} />
+          <PostMeta post={p} />
+          <p e:if={p.body} class="item-text">{p.body}</p>
+        </div>
+      </article>
+
+      <form e:if={session.isLoggedIn()} class="item-compose stack is-sm" onsubmit={() => onReply(comments, null, draft)}>
+        <textarea value={draft.body} maxlength={MAX_COMMENT} placeholder="add to the discussion" aria-label="comment"></textarea>
+        <p e:if={draft.error} class="error" role="alert">{draft.error}</p>
+        <div class="row">
+          <button type="submit" class="is-primary">comment</button>
+        </div>
+      </form>
+      <p e:else class="item-signin"><a href="/signin">Sign in</a> to comment.</p>
+
+      <ul class="comment-tree">
+        <CommentNode e:for={c of childrenOf(comments, null)} {c} all={comments} votes={commentVotes} />
+      </ul>
+
+      <p e:if={comments.length === 0} class="item-empty">No comments yet. Start the discussion.</p>
+    </div>
+  </Layout>
+</html>
