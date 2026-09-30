@@ -1,0 +1,54 @@
+import "./style.css";
+import { redirect, session } from "@elements/app";
+import favicon from "#app/shared/assets/favicons/favicon.svg";
+import { signout } from "#app/shared/services/auth";
+
+function onSignout() {
+  signout();
+  redirect("/");
+}
+
+<Layout (title: string, active: string = "")>
+  <head>
+    <title>{title ? `${title} | upvotehall` : "upvotehall"}</title>
+    <meta name="description" content="Links and discussion for programmers.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+  </head>
+  <body>
+    <div class="app">
+      <header class="site-header">
+        <div class="page-shell is-marketing site-header-inner cluster">
+          <a href="/" class="site-brand row">
+            <svg class="site-brand-mark" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+              <rect width="24" height="24" rx="5" fill="currentColor"/>
+              <path d="M12 6 L18 15 H6 Z" fill="#ffffff"/>
+            </svg>
+            upvotehall
+          </a>
+
+          <nav class="site-nav row" aria-label="Sections">
+            <a href="/" class={[active === "top" && "is-active"]}>top</a>
+            <a href="/newest" class={[active === "newest" && "is-active"]}>new</a>
+            <a href="/week" class={[active === "week" && "is-active"]}>week</a>
+            <a href="/submit" class={[active === "submit" && "is-active"]}>submit</a>
+          </nav>
+
+          <div class="site-user row">
+            <a e:if={session.isLoggedIn()} href={`/user/${session.get("userName")}`}>{session.get("userName")}</a>
+            <button e:if={session.isLoggedIn()} class="is-ghost is-sm" onclick={() => onSignout()}>sign out</button>
+            <a e:else href="/signin" class="button is-sm">sign in</a>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-main site-main">
+        <slot/>
+      </main>
+
+      <footer class="site-footer">
+        <div class="page-shell is-marketing">upvotehall, a link board for programmers.</div>
+      </footer>
+    </div>
+  </body>
+</Layout>

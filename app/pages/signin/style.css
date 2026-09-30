@@ -1,0 +1,37 @@
+@import "#app/shared/styles/page.css";
+
+.signin-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-10);
+  align-items: start;
+  padding-top: var(--space-8);
+}
+
+.seed-logins {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.seed-logins button {
+  width: 100%;
+  justify-content: flex-start;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 45rem) {
+  .signin-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+    padding-top: var(--space-4);
+  }
+
+  .signin-layout > .card {
+    order: -1;
+  }
+}

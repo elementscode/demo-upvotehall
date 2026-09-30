@@ -1,0 +1,79 @@
+import "./style.css";
+import { redirect } from "@elements/app";
+import { Layout } from "#app/shared/templates/layout";
+import { signin, SEED_HANDLES, SEED_PASSWORD } from "#app/shared/services/auth";
+
+interface SigninForm {
+  handle: string;
+  password: string;
+  error: string;
+}
+
+function onSubmit(form: SigninForm) {
+  try {
+    signin(form.handle, form.password);
+    form.error = "";
+    redirect("/");
+  } catch (err: any) {
+    form.error = err.message;
+  }
+}
+
+function useSeed(form: SigninForm, handle: string) {
+  form.handle = handle;
+  form.password = SEED_PASSWORD;
+  form.error = "";
+}
+
+<html lang="en" class="page-signin" (
+  private form: SigninForm = { handle: "", password: "", error: "" },
+)>
+  <Layout title="sign in">
+    <div class="page-shell is-marketing signin-layout">
+      <form class="stack" onsubmit={() => onSubmit(form)}>
+        <h1>Sign in</h1>
+
+        <p e:if={form.error} class="error" role="alert">{form.error}</p>
+
+        <div class="field">
+          <label for="handle">username</label>
+          <input id="handle"
+                 name="username"
+                 value={form.handle}
+                 autocomplete="username"
+                 autocapitalize="none"
+                 spellcheck={false}
+                 required>
+        </div>
+
+        <div class="field">
+          <label for="password">password</label>
+          <input id="password"
+                 name="password"
+                 type="password"
+                 value={form.password}
+                 autocomplete="current-password"
+                 required>
+        </div>
+
+        <button type="submit" class="is-primary">sign in</button>
+
+        <a href="/signup">need an account? sign up</a>
+      </form>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>Demo accounts</h2>
+        </div>
+        <div class="card-body stack">
+          <p class="hint">Every seeded account uses the password <code>{SEED_PASSWORD}</code>. Pick one to fill the form.</p>
+          <ul class="seed-logins">
+            <li e:for={handle of SEED_HANDLES} e:key={(h: string) => h}>
+              <button type="button" class="is-sm" onclick={() => useSeed(form, handle)}>{handle}</button>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </Layout>
+</html>

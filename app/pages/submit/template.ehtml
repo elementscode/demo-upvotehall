@@ -1,0 +1,61 @@
+import "./style.css";
+import { FieldErrors, ValidationError, redirect } from "@elements/app";
+import { Layout } from "#app/shared/templates/layout";
+import { SubmitForm, submitPost } from "#app/shared/services/posts";
+
+function onSubmit(form: SubmitForm, errors: { value: FieldErrors<SubmitForm> }) {
+  try {
+    let id = submitPost(form);
+    errors.value = {};
+    redirect(`/item/${id}`);
+  } catch (err: any) {
+    if (err instanceof ValidationError) {
+      errors.value = (err.errors ?? { title: [err.message] }) as FieldErrors<SubmitForm>;
+    } else {
+      errors.value = { title: [err.message] };
+    }
+  }
+}
+
+<html lang="en" class="page-submit" (
+  private form: SubmitForm = { title: "", url: "", body: "" },
+  private errors: { value: FieldErrors<SubmitForm> } = { value: {} },
+)>
+  <Layout title="submit" active="submit">
+    <div class="page-shell is-form submit-form">
+      <form class="stack" onsubmit={() => onSubmit(form, errors)}>
+        <h1>Submit</h1>
+        <p class="hint">Share a link, or leave the link empty and write a text post. Both is fine too.</p>
+
+        <div class="field">
+          <label for="title">title</label>
+          <input id="title"
+                 name="title"
+                 value={form.title}
+                 maxlength={120}
+                 class={[errors.value.title && "is-error"]}
+                 required>
+          <p e:if={errors.value.title} class="error">{errors.value.title?.[0]}</p>
+        </div>
+
+        <div class="field">
+          <label for="url">url</label>
+          <input id="url"
+                 name="url"
+                 type="url"
+                 value={form.url}
+                 placeholder="https://"
+                 class={[errors.value.url && "is-error"]}>
+          <p e:if={errors.value.url} class="error">{errors.value.url?.[0]}</p>
+        </div>
+
+        <div class="field">
+          <label for="body">text</label>
+          <textarea id="body" name="body" value={form.body}></textarea>
+        </div>
+
+        <button type="submit" class="is-primary">submit</button>
+      </form>
+    </div>
+  </Layout>
+</html>

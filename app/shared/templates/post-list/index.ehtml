@@ -1,0 +1,73 @@
+import "./style.css";
+import { LiveView, session } from "@elements/app";
+import {
+  Post,
+  PostVote,
+  ago,
+  domainOf,
+  hasVoted,
+  togglePostVote,
+} from "#app/shared/services/posts";
+
+function plural(n: number, word: string): string {
+  return `${n} ${word}${n === 1 ? "" : "s"}`;
+}
+
+<VoteButton (post: Post, votes: LiveView<PostVote> | null)>
+  <div class="vote">
+    <button class={["vote-button", hasVoted(votes, post.id) && "is-active"]}
+            aria-label={hasVoted(votes, post.id) ? "remove upvote" : "upvote"}
+            aria-pressed={hasVoted(votes, post.id)}
+            disabled={post.userId === session.get("userId")}
+            title={post.userId === session.get("userId") ? "your post" : "upvote"}
+            onclick={() => togglePostVote(votes, post.id)}>
+      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+        <path d="M6 2 L11 9 H1 Z" fill="currentColor"/>
+      </svg>
+    </button>
+    <span class="vote-score">{post.score}</span>
+  </div>
+</VoteButton>
+
+<PostMeta (post: Post)>
+  <p class="post-meta cluster">
+    <span>by <a href={`/user/${post.userName}`}>{post.userName}</a></span>
+    <span aria-hidden="true">·</span>
+    <span>{ago(post.createdAt)}</span>
+    <span aria-hidden="true">·</span>
+    <a href={`/item/${post.id}`}>{post.commentCount === 0 ? "discuss" : plural(post.commentCount, "comment")}</a>
+  </p>
+</PostMeta>
+
+<PostTitle (post: Post)>
+  <h2 class="post-title">
+    <a href={post.url ?? `/item/${post.id}`}>{post.title}</a>
+    <span e:if={post.url} class="post-domain">({domainOf(post.url)})</span>
+  </h2>
+</PostTitle>
+
+<PostList (
+  rows: Post[],
+  votes: LiveView<PostVote> | null,
+  feed: LiveView<Post> | null = null,
+  empty: string = "nothing here yet",
+)>
+  <div>
+    <ol class="post-list">
+      <li class="post-row" e:for={[i, post] of rows.entries()} e:key={(entry: [number, Post]) => entry[1].id}>
+        <span class="post-rank">{i + 1}.</span>
+        <VoteButton {post} {votes} />
+        <div class="post-body">
+          <PostTitle {post} />
+          <PostMeta {post} />
+        </div>
+      </li>
+    </ol>
+
+    <p e:if={rows.length === 0} class="post-list-empty">{empty}</p>
+
+    <div e:if={feed?.hasMore} class="post-list-more">
+      <button class="is-sm" onclick={() => feed?.more()}>more</button>
+    </div>
+  </div>
+</PostList>

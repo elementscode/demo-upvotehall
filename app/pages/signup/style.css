@@ -1,0 +1,5 @@
+@import "#app/shared/styles/page.css";
+
+.signup-form {
+  padding-top: var(--space-8);
+}
