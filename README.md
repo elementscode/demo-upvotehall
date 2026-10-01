@@ -38,7 +38,7 @@ Upvotehall needed votes that move scores on every open page, a front page ranked
 
 ### What the agent got from the tooling
 
-The agent ran 31 builds in 16 minutes. By the build's own timer, the median build finished in 42 milliseconds, so it checked its work after each edit and kept going. Along the way the build caught a load-more handler converted to async, whose message named the fix: widen its return type to `void | Promise<void>` and await the call. The agent read the manual for each part as it reached it, 40 pages from `recipes/likes-toggle` and `livetable/windows` to `recipes/time-ago`, then wrote 35 tests. In a real browser it drove sign-in, votes and a reply across two browsers, and fixed the comment threads at phone width.
+The agent ran 31 builds in 16 minutes. It checked its work after each edit and kept going. Along the way the build caught a load-more handler converted to async, whose message named the fix: widen its return type to `void | Promise<void>` and await the call. The agent read the manual for each part as it reached it, 40 pages from `recipes/likes-toggle` and `livetable/windows` to `recipes/time-ago`, then wrote 35 tests. In a real browser it drove sign-in, votes and a reply across two browsers, and fixed the comment threads at phone width.
 
 Start in `app/shared/services/posts.ts`.
 
