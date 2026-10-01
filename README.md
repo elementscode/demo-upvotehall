@@ -30,10 +30,15 @@ Upvotehall needed votes that move scores on every open page, a front page ranked
 ### What Elements gave the app
 
 - **Live posts and scores.** Posts are a LiveTable opened by rank for the front page, by time for newest and by author for profiles, 25 at a time. Database triggers keep each post's score and comment count, and a notify trigger carries every change to the open lists.
+
 - **Votes through a view.** Votes are LiveTables opened for the signed-in reader, so a vote is an insert or delete through the view, with the voter set from the session.
+
 - **Live threads.** Comments are a LiveTable opened per post. A new comment appears in every open copy of the thread and schedules its reply email in the same transaction.
+
 - **Ranking on a schedule.** A SQL function scores each post by votes and age, and one cron line runs a job every five minutes that re-ranks the last two weeks, so the front page keeps moving.
+
 - **Reply emails and karma.** A background job emails the author of the parent comment or post. A profile's karma counts the votes other people gave that user's posts and comments.
+
 - **Data from SQL files.** Two migrations define the schema and its triggers, then seed eight users, thirty posts over the last four days, votes, and comment threads several levels deep.
 
 ### What the project server gave the agent
