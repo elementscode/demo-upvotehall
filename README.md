@@ -23,6 +23,25 @@ app.
 elements create upvotehall -scaffold=elementscode/demo-upvotehall
 ```
 
+## How it's built
+
+Upvotehall needed votes that move scores on every open page, a front page ranked by votes and age, live threaded comments, and an email when someone replies. Each of those is a part of Elements, so the agent spent its 16 minutes on the community itself.
+
+### What Elements gave the app
+
+- **Live posts and scores.** `posts` in `app/shared/services/posts.ts` is a LiveTable opened by rank for the front page, by time for `/newest` and by author for profiles, 25 at a time. Database triggers keep each post's score and comment count, and a notify trigger carries every change to the open lists.
+- **Votes through a view.** `postVotes` and `commentVotes` are LiveTables opened for the signed-in reader, so a vote is an insert or delete through the view, with the voter set from the session.
+- **Live threads.** `comments` in `app/shared/services/comments.ts` is a LiveTable opened per post. A new comment goes in through the view with its parent, appears in every open copy of the thread, and schedules `ReplyNotificationJob` in the same transaction.
+- **Ranking on a schedule.** A `postRank` SQL function scores each post by votes and age. One line in `index.ts`, `app.cron("every 5m", ...)`, runs `RankPostsJob`, which re-ranks the last two weeks so the front page keeps moving.
+- **Reply emails and karma.** `ReplyNotificationJob` in `app/jobs/reply-notification.ts` sends the `reply` email template to the author of the parent comment or post. A profile's karma counts the votes other people gave that user's posts and comments.
+- **Data from SQL files.** Two migrations define the schema and its triggers, then seed eight users, thirty posts over the last four days, votes, and comment threads several levels deep.
+
+### What the agent got from the tooling
+
+The agent ran 31 builds in 16 minutes. By the build's own timer, the median build finished in 42 milliseconds, so it checked its work after each edit and kept going. Along the way the build caught a load-more handler converted to async, whose message named the fix: widen its return type to `void | Promise<void>` and await the call. The agent read the manual for each part as it reached it, 40 pages from `recipes/likes-toggle` and `livetable/windows` to `recipes/time-ago`, then wrote 35 tests. In a real browser it drove sign-in, votes and a reply across two browsers, and fixed the comment threads at phone width.
+
+Start in `app/shared/services/posts.ts`.
+
 ## Seed data and demo accounts
 
 The seed creates eight users, thirty link and text posts spread over the last
