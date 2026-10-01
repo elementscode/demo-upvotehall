@@ -36,9 +36,13 @@ Upvotehall needed votes that move scores on every open page, a front page ranked
 - **Reply emails and karma.** `ReplyNotificationJob` in `app/jobs/reply-notification.ts` sends the `reply` email template to the author of the parent comment or post. A profile's karma counts the votes other people gave that user's posts and comments.
 - **Data from SQL files.** Two migrations define the schema and its triggers, then seed eight users, thirty posts over the last four days, votes, and comment threads several levels deep.
 
-### What the agent got from the tooling
+### What the project server gave the agent
 
-The agent ran 31 builds in 16 minutes. It checked its work after each edit and kept going. Along the way the build caught a load-more handler converted to async, whose message named the fix: widen its return type to `void | Promise<void>` and await the call. The agent read the manual for each part as it reached it, 40 pages from `recipes/likes-toggle` and `livetable/windows` to `recipes/time-ago`, then wrote 35 tests. In a real browser it drove sign-in, votes and a reply across two browsers, and fixed the comment threads at phone width.
+The project server runs alongside the agent and answers as soon as a file is saved: it type-checks the templates, TypeScript and SQL, applies migrations and reruns the tests, so every question came back right away and the agent kept building.
+
+### What shipped
+
+The app type-checks with zero errors and all 35 tests pass. During the build the agent drove sign-in, votes and a reply across two browsers. Every page was checked on desktop and phone before publishing, and the repo was installed fresh from GitHub and run before the demo went live.
 
 Start in `app/shared/services/posts.ts`.
 
