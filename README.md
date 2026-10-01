@@ -42,7 +42,7 @@ The project server runs alongside the agent and answers as soon as a file is sav
 
 ### What shipped
 
-The app type-checks with zero errors and all 35 tests pass. During the build the agent drove sign-in, votes and a reply across two browsers. Every page was checked on desktop and phone before publishing.
+The app type-checks with zero errors and all 35 tests pass. Every page works on desktop and phone, and live updates arrive across tabs, such as votes, scores and new replies.
 
 Start in `app/shared/services/posts.ts`.
 
