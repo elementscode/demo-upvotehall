@@ -10,9 +10,6 @@ Links and text posts ranked by votes and age, newest and top pages, threaded com
 
 ## Agent specs
 
-What one run of the prompt below took, from an empty Elements project to this
-app.
-
 - **Agent:** Claude Code, Opus 5.5 Medium
 - **Time:** 16 min
 - **Cost:** $4.99 at API rates, September 2026
@@ -71,25 +68,7 @@ page lists them.
 Reply emails go to the person replied to. In development they are written to
 `.elements/logs/job.log` instead of being sent.
 
-## The prompt
-
-```text
-Build a link aggregator named upvotehall for a programming community.
-
-- Sign up, log in.
-- Submit a link with a title, or a text post.
-- Front page ranked by votes and age, recomputed every few minutes; a newest
-  page; a top of the week page.
-- Upvote posts and comments.
-- Threaded comments, collapsible, with replies to any depth.
-- User pages with karma, submissions and comments.
-- Reply notifications by email.
-
-Seed eight users, thirty posts over the last few days with votes, and comment
-threads several levels deep. Show the seeded logins on the sign-in page.
-
-Votes and new comments update in real time.
-```
+**Demo:** [Upvotehall](https://elements.dev/demos/01a0f3e4-7332-73bb-a1e9-c142c229657c)
 
 ## License
 
