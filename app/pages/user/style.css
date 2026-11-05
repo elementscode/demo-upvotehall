@@ -53,8 +53,3 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-
-.user-empty {
-  padding-block: var(--space-8);
-  color: var(--ink-soft);
-}

@@ -3,6 +3,8 @@ import { LiveView } from "@elements/app";
 import { Layout } from "#app/shared/templates/layout";
 import { PostList } from "#app/shared/templates/post-list";
 import { Post, PostVote, ago } from "#app/shared/services/posts";
+import { Empty } from "@elements/ui/empty";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@elements/ui/tabs";
 
 export interface Profile {
   id: string;
@@ -41,32 +43,32 @@ export interface UserComment {
         </div>
       </header>
 
-      <div class="tabs">
-        <nav class="tab-list" aria-label="Activity">
-          <a class={["tab", tab === "posts" && "is-active"]} href={`/user/${profile.handle}`}>submissions</a>
-          <a class={["tab", tab === "comments" && "is-active"]} href={`/user/${profile.handle}?tab=comments`}>comments</a>
-        </nav>
-      </div>
+      <Tabs value={tab}>
+        <TabsList label="Activity">
+          <TabsTrigger value="posts" href={`/user/${profile.handle}`}>submissions</TabsTrigger>
+          <TabsTrigger value="comments" href={`/user/${profile.handle}?tab=comments`}>comments</TabsTrigger>
+        </TabsList>
 
-      <div e:if={tab === "posts"}>
-        <PostList rows={posts.slice()} {votes} feed={posts} empty={`${profile.handle} has not submitted anything yet`} />
-      </div>
+        <TabsContent value="posts">
+          <PostList rows={posts.slice()} {votes} feed={posts} empty={`${profile.handle} has not submitted anything yet`} />
+        </TabsContent>
 
-      <div e:else>
-        <ul class="user-comments">
-          <li e:for={c of comments} class="user-comment">
-            <p class="user-comment-meta cluster">
-              <span>{c.score} {c.score === 1 ? "point" : "points"}</span>
-              <span aria-hidden="true">·</span>
-              <a href={`/item/${c.postId}#c-${c.id}`}>{ago(c.createdAt)}</a>
-              <span aria-hidden="true">·</span>
-              <span>on <a href={`/item/${c.postId}`}>{c.postTitle}</a></span>
-            </p>
-            <p class="user-comment-body">{c.body}</p>
-          </li>
-        </ul>
-        <p e:if={comments.length === 0} class="user-empty">{profile.handle} has not commented yet.</p>
-      </div>
+        <TabsContent value="comments">
+          <ul class="user-comments">
+            <li e:for={c of comments} class="user-comment">
+              <p class="user-comment-meta cluster">
+                <span>{c.score} {c.score === 1 ? "point" : "points"}</span>
+                <span aria-hidden="true">·</span>
+                <a href={`/item/${c.postId}#c-${c.id}`}>{ago(c.createdAt)}</a>
+                <span aria-hidden="true">·</span>
+                <span>on <a href={`/item/${c.postId}`}>{c.postTitle}</a></span>
+              </p>
+              <p class="user-comment-body">{c.body}</p>
+            </li>
+          </ul>
+          <Empty e:if={comments.length === 0} title={`${profile.handle} has not commented yet.`} />
+        </TabsContent>
+      </Tabs>
     </div>
   </Layout>
 </html>
