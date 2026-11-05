@@ -1,6 +1,11 @@
 import "./style.css";
 import { redirect } from "@elements/app";
 import { Layout } from "#app/shared/templates/layout";
+import { Alert } from "@elements/ui/alert";
+import { Button } from "@elements/ui/button";
+import { Card, CardContent } from "@elements/ui/card";
+import { Field } from "@elements/ui/field";
+import { Input } from "@elements/ui/input";
 import { signin, SEED_HANDLES, SEED_PASSWORD } from "#app/shared/services/auth";
 
 interface SigninForm {
@@ -33,47 +38,38 @@ function useSeed(form: SigninForm, handle: string) {
       <form class="stack" onsubmit={() => onSubmit(form)}>
         <h1>Sign in</h1>
 
-        <p e:if={form.error} class="error" role="alert">{form.error}</p>
+        <Alert e:if={form.error} variant="danger" description={form.error} />
 
-        <div class="field">
-          <label for="handle">username</label>
-          <input id="handle"
-                 name="username"
+        <Field label="username" reserveError={false}>
+          <Input name="username"
                  value={form.handle}
-                 autocomplete="username"
-                 autocapitalize="none"
-                 spellcheck={false}
-                 required>
-        </div>
+                 required
+                 attrs={{ id: "handle", autocomplete: "username", autocapitalize: "none", spellcheck: "false" }} />
+        </Field>
 
-        <div class="field">
-          <label for="password">password</label>
-          <input id="password"
-                 name="password"
+        <Field label="password" reserveError={false}>
+          <Input name="password"
                  type="password"
                  value={form.password}
-                 autocomplete="current-password"
-                 required>
-        </div>
+                 required
+                 attrs={{ id: "password", autocomplete: "current-password" }} />
+        </Field>
 
-        <button type="submit" class="is-primary">sign in</button>
+        <Button type="submit" variant="primary">sign in</Button>
 
         <a href="/signup">need an account? sign up</a>
       </form>
 
-      <section class="card">
-        <div class="card-head">
-          <h2>Demo accounts</h2>
-        </div>
-        <div class="card-body stack">
+      <Card title="Demo accounts" level={2}>
+        <CardContent class="stack">
           <p class="hint">Every seeded account uses the password <code>{SEED_PASSWORD}</code>. Pick one to fill the form.</p>
           <ul class="seed-logins">
             <li e:for={handle of SEED_HANDLES} e:key={(h: string) => h}>
-              <button type="button" class="is-sm" onclick={() => useSeed(form, handle)}>{handle}</button>
+              <Button size="sm" block onclick={() => useSeed(form, handle)}>{handle}</Button>
             </li>
           </ul>
-        </div>
-      </section>
+        </CardContent>
+      </Card>
     </div>
   </Layout>
 </html>
