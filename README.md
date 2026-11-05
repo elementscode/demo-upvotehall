@@ -6,6 +6,8 @@
 
 Links and text posts ranked by votes and age, newest and top pages, threaded comments, karma and reply emails, all live.
 
+Upvotehall uses the `coder` theme from @elements/ui.
+
 [Run this app on your machine](https://elements.dev/demos/01a0f3e4-7332-73bb-a1e9-c142c229657c). Use this demo as inspiration, or as the starting point for your own app. Your agent creates a new app with this one as the scaffold, and you prompt it to add whatever features you want.
 
 ## How it's built
