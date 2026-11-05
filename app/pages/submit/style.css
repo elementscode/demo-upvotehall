@@ -3,7 +3,3 @@
 .submit-form {
   padding-top: var(--space-8);
 }
-
-.submit-form textarea {
-  min-height: 10rem;
-}

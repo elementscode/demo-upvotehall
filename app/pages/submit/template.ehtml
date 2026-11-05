@@ -1,6 +1,10 @@
 import "./style.css";
 import { FieldErrors, ValidationError, redirect } from "@elements/app";
 import { Layout } from "#app/shared/templates/layout";
+import { Button } from "@elements/ui/button";
+import { Field } from "@elements/ui/field";
+import { Input } from "@elements/ui/input";
+import { Textarea } from "@elements/ui/textarea";
 import { SubmitForm, submitPost } from "#app/shared/services/posts";
 
 function onSubmit(form: SubmitForm, errors: { value: FieldErrors<SubmitForm> }) {
@@ -27,34 +31,26 @@ function onSubmit(form: SubmitForm, errors: { value: FieldErrors<SubmitForm> }) 
         <h1>Submit</h1>
         <p class="hint">Share a link, or leave the link empty and write a text post. Both is fine too.</p>
 
-        <div class="field">
-          <label for="title">title</label>
-          <input id="title"
-                 name="title"
+        <Field label="title" error={errors.value.title?.[0] ?? ""}>
+          <Input name="title"
                  value={form.title}
-                 maxlength={120}
-                 class={[errors.value.title && "is-error"]}
-                 required>
-          <p e:if={errors.value.title} class="error">{errors.value.title?.[0]}</p>
-        </div>
+                 required
+                 attrs={{ id: "title", maxlength: 120 }} />
+        </Field>
 
-        <div class="field">
-          <label for="url">url</label>
-          <input id="url"
-                 name="url"
+        <Field label="url" error={errors.value.url?.[0] ?? ""}>
+          <Input name="url"
                  type="url"
                  value={form.url}
                  placeholder="https://"
-                 class={[errors.value.url && "is-error"]}>
-          <p e:if={errors.value.url} class="error">{errors.value.url?.[0]}</p>
-        </div>
+                 attrs={{ id: "url" }} />
+        </Field>
 
-        <div class="field">
-          <label for="body">text</label>
-          <textarea id="body" name="body" value={form.body}></textarea>
-        </div>
+        <Field label="text" reserveError={false}>
+          <Textarea name="body" value={form.body} rows={7} attrs={{ id: "body" }} />
+        </Field>
 
-        <button type="submit" class="is-primary">submit</button>
+        <Button type="submit" variant="primary">submit</Button>
       </form>
     </div>
   </Layout>
