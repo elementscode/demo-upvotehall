@@ -1,5 +1,8 @@
 import "./style.css";
 import { LiveView, session } from "@elements/app";
+import { Button } from "@elements/ui/button";
+import { Empty } from "@elements/ui/empty";
+import { Toggle } from "@elements/ui/toggle";
 import {
   Post,
   PostVote,
@@ -15,16 +18,17 @@ function plural(n: number, word: string): string {
 
 <VoteButton (post: Post, votes: LiveView<PostVote> | null)>
   <div class="vote">
-    <button class={["vote-button", hasVoted(votes, post.id) && "is-active"]}
-            aria-label={hasVoted(votes, post.id) ? "remove upvote" : "upvote"}
-            aria-pressed={hasVoted(votes, post.id)}
+    <Toggle variant="outline"
+            size="sm"
+            label="upvote"
+            pressed={hasVoted(votes, post.id)}
             disabled={post.userId === session.get("userId")}
-            title={post.userId === session.get("userId") ? "your post" : "upvote"}
-            onclick={() => togglePostVote(votes, post.id)}>
+            attrs={{ title: post.userId === session.get("userId") ? "your post" : "upvote" }}
+            onPressedChange={(_, details) => { details.cancel(); togglePostVote(votes, post.id); }}>
       <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
         <path d="M6 2 L11 9 H1 Z" fill="currentColor"/>
       </svg>
-    </button>
+    </Toggle>
     <span class="vote-score">{post.score}</span>
   </div>
 </VoteButton>
@@ -64,10 +68,10 @@ function plural(n: number, word: string): string {
       </li>
     </ol>
 
-    <p e:if={rows.length === 0} class="post-list-empty">{empty}</p>
+    <Empty e:if={rows.length === 0} title={empty} />
 
     <div e:if={feed?.hasMore} class="post-list-more">
-      <button class="is-sm" onclick={() => feed?.more()}>more</button>
+      <Button size="sm" onclick={() => feed?.more()}>more</Button>
     </div>
   </div>
 </PostList>

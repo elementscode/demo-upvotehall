@@ -1,5 +1,6 @@
 import "./style.css";
 import { redirect, session } from "@elements/app";
+import { Button } from "@elements/ui/button";
 import favicon from "#app/shared/assets/favicons/favicon.svg";
 import { signout } from "#app/shared/services/auth";
 
@@ -36,8 +37,8 @@ function onSignout() {
 
           <div class="site-user row">
             <a e:if={session.isLoggedIn()} href={`/user/${session.get("userName")}`}>{session.get("userName")}</a>
-            <button e:if={session.isLoggedIn()} class="is-ghost is-sm" onclick={() => onSignout()}>sign out</button>
-            <a e:else href="/signin" class="button is-sm">sign in</a>
+            <Button e:if={session.isLoggedIn()} variant="link" size="sm" onclick={() => onSignout()}>sign out</Button>
+            <Button e:else href="/signin" size="sm">sign in</Button>
           </div>
         </div>
       </header>
