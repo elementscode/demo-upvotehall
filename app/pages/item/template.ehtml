@@ -1,5 +1,5 @@
 import "./style.css";
-import { LifecycleEvent, LiveView, session } from "@elements/app";
+import { LiveView, session } from "@elements/app";
 import { Button } from "@elements/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@elements/ui/collapsible";
 import { Empty } from "@elements/ui/empty";
@@ -45,10 +45,6 @@ export function onReply(view: LiveView<Comment>, parentId: string | null, draft:
   }
 }
 
-function focusTextarea(e: LifecycleEvent) {
-  e.target.querySelector("textarea")?.focus();
-}
-
 function plural(n: number, word: string): string {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
 }
@@ -90,9 +86,9 @@ function plural(n: number, word: string): string {
           <a e:else href="/signin">sign in to reply</a>
         </div>
 
-        <form e:if={draft.open} class="comment-reply stack is-sm" oninsert={focusTextarea} onsubmit={() => onReply(all, c.id, draft)}>
+        <form e:if={draft.open} class="comment-reply stack is-sm" onsubmit={() => onReply(all, c.id, draft)}>
           <Field error={draft.error}>
-            <Textarea value={draft.body} rows={4} maxlength={MAX_COMMENT} placeholder={`reply to ${c.userName}`} attrs={{ "aria-label": "reply" }} />
+            <Textarea value={draft.body} rows={4} maxlength={MAX_COMMENT} placeholder={`reply to ${c.userName}`} autoFocus attrs={{ "aria-label": "reply" }} />
           </Field>
           <div class="row">
             <Button type="submit" variant="primary" size="sm">reply</Button>
