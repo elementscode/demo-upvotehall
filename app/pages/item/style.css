@@ -20,7 +20,7 @@
 }
 
 .item-signin {
-  padding-block: var(--space-5);
+  padding-block: var(--space-4) 0;
   color: var(--ink-soft);
 }
 
@@ -44,10 +44,6 @@
 .comment:target > .comment-fold > .comment-head {
   background: var(--accent-soft);
   border-radius: var(--radius-sm);
-}
-
-.comment.is-new > .comment-head .comment-author {
-  color: var(--accent-deep);
 }
 
 .comment > *,
@@ -98,10 +94,6 @@
 
 .comment-content {
   padding-inline-start: calc(var(--space-5) + var(--space-2));
-}
-
-.item-signin {
-  padding-block: var(--space-4) 0;
 }
 
 .comment-head > * {

@@ -78,13 +78,8 @@
   }
 }
 
-.site-header .page-shell,
 .site-footer .page-shell {
   padding-block: 0;
-}
-
-.site-header .site-header-inner {
-  padding-block: var(--space-3);
 }
 
 .site-main > .page-shell {
